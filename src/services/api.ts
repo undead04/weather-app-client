@@ -1,7 +1,7 @@
 import { icon } from "@fortawesome/fontawesome-svg-core";
 import axios from "axios";
 const url = {
-  baseUrl: "http://localhost:4000/api",
+  baseUrl: "https://weather-app-be-rosy.vercel.app/api",
   weather:'https://api.openweathermap.org/data/2.5/weather',
   forecast:"https://api.openweathermap.org/data/2.5/forecast/",
   air:"http://api.openweathermap.org/data/2.5/air_pollution",
