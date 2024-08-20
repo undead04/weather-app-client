@@ -1,0 +1,29 @@
+.backgroundImage {
+    background: #ebebeb url("https://www.awxcdn.com/adc-assets/images/hero/5/1024x450.jpg") 50% no-repeat;
+    background-size: cover;
+    height: 400px;
+  }
+  @media(max-width:769px){
+   .backgroundImage{
+    background: #ebebeb url("https://www.awxcdn.com/adc-assets/images/hero/5/768x450.jpg") 50% no-repeat;
+   }
+  }
+  @media(max-width:426px){
+    .backgroundImage{
+      background: #ebebeb url("https://www.awxcdn.com/adc-assets/images/hero/5/425x450.jpg") 50% no-repeat;
+    }
+  }
+  @media(max-width:376px){
+    .backgroundImage{
+      background: #ebebeb url("https://www.awxcdn.com/adc-assets/images/hero/5/375x450.jpg") 50% no-repeat;
+    }
+  }
+  @media(max-width:321px){
+    .backgroundImage{
+      background: #ebebeb url("https://www.awxcdn.com/adc-assets/images/hero/5/320x450.jpg") 50% no-repeat;
+    }
+  }
+  .hover-shadow-lg:hover {
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.175);
+
+  }
