@@ -2,18 +2,18 @@
 import axios from "axios";
 const url = {
   baseUrl: "https://weather-app-be-rosy.vercel.app/api",
-  weather:'weather',
-  forecast:"forecast",
-  air:"air",
-  state:'state',
-  county:'county',
-  icon:'icon',
-  address:'address'
+  weather: 'weather',
+  forecast: "forecast",
+  air: "air",
+  state: 'state',
+  county: 'county',
+  icon: 'icon',
+  address: 'address'
 
 };
-const content={
-  json:"application/json",
-  formData:"multipart/form-data"
+const content = {
+  json: "application/json",
+  formData: "multipart/form-data"
 }
 const instance = axios.create({
   baseURL: url.baseUrl,
@@ -30,6 +30,6 @@ const api = {
   delete: instance.delete,
   put: instance.put,
   patch: instance.patch,
-  
+
 };
 export default api;

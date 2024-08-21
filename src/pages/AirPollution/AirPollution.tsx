@@ -23,6 +23,14 @@ const AirPollution = () => {
       // Xử lý kết quả của cả hai yêu cầu
       if (currentAirRes.status === "fulfilled")
         setAirPollution(currentAirRes.value);
+      else {
+        console.log(currentAirRes.reason);
+        if (currentAirRes.reason.response.data.status === 429) {
+          navigate("/finishService");
+        } else {
+          navigate("/page-Support");
+        }
+      }
     } catch (error: any) {
       console.log(error);
     } finally {

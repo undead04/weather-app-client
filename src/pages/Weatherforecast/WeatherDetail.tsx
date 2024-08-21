@@ -6,10 +6,9 @@ import {
   handleConvertMtoKm,
   handleDegWind,
   handleGetNowHour,
-  removeDiacritics,
 } from "../../utils/changeTemp";
 import InconService from "../../services/IconService";
-import { IAddress, IWeatherData } from "../../types/types";
+import { IWeatherData } from "../../types/types";
 import { useNavigate, useParams } from "react-router-dom";
 import LoadingReact from "../../components/LoadingReact";
 import currentWeatherService from "../../services/currentWeather";
@@ -27,6 +26,14 @@ const WeatherDetail = () => {
       // Xử lý kết quả của cả hai yêu cầu
       if (currentWeatherRes.status === "fulfilled")
         setcurrentWeather(currentWeatherRes.value);
+      else {
+        console.log(currentWeatherRes.reason);
+        if (currentWeatherRes.reason.response.data.status === 429) {
+          navigate("/finishService");
+        } else {
+          navigate("/page-Support");
+        }
+      }
     } catch (error: any) {
       console.log(error);
     } finally {
@@ -55,7 +62,7 @@ const WeatherDetail = () => {
                         current: 1,
                       },
                       {
-                        lable: "Chất lượng không kí",
+                        lable: "Chất lượng không khí",
                         link: `/${state}/${county}/air-quality-index`,
                         current: 2,
                       },

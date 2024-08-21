@@ -1,6 +1,6 @@
 import * as React from "react";
 import { useState, useEffect } from "react";
-import { ICounty, IWeatherCounty } from "../../types/types";
+import { ICounty, IListCounty, IWeatherCounty } from "../../types/types";
 import { Link, useNavigate } from "react-router-dom";
 import countyService from "../../services/countyService";
 import { handleChangeTemp } from "../../utils/changeTemp";
@@ -11,9 +11,7 @@ const Home = () => {
   const [listAddress, setListAddress] = useState<Partial<ICounty[]>>([]);
   const [inputValue, setInputValue] = useState<string>("");
   const [loading, setLoading] = useState(true);
-  const [listWeatherCounty, setListWeatherCounty] = useState<IWeatherCounty[]>(
-    []
-  );
+  const [listCounty, setListCounty] = useState<ICounty[]>([]);
   const navigate = useNavigate();
   const [timeoutId, setTimeoutId] = useState<NodeJS.Timeout | null>(null);
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -46,8 +44,8 @@ const Home = () => {
   };
   const loadData = async () => {
     try {
-      const response = await currentWeatherService.listRandom();
-      setListWeatherCounty(response);
+      const countyRes = await countyService.random();
+      setListCounty(countyRes);
     } catch (error: any) {
       console.log(error);
     } finally {
@@ -120,27 +118,15 @@ const Home = () => {
                     </div>
                   </div>
                   <div className="row g-3 ">
-                    {listWeatherCounty.map((item, index) => (
+                    {listCounty.map((item, index) => (
                       <div className="col-12 col-md-6" key={index}>
                         <Link
-                          to={`/${item.county.state.name}/${item.county.name}/weather-forecast`}
+                          to={`/${item.state.name}/${item.name}/weather-forecast`}
                           className="text-black text-decoration-none"
                         >
                           <div className="row me-1 bg-white justify-content-center py-3">
                             <div className="col align-self-center">
-                              {item.county.name}
-                            </div>
-                            <div className="col-auto align-self-center">
-                              <img
-                                src={IconService.get(
-                                  item.weather.weather[0].icon
-                                )}
-                                alt=""
-                                height={"50px"}
-                              />
-                            </div>
-                            <div className="col-auto text-end align-self-center">
-                              {handleChangeTemp(item.weather.main.temp)}°
+                              {item.name}
                             </div>
                           </div>
                         </Link>

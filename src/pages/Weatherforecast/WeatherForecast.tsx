@@ -44,11 +44,36 @@ const WeatherForecase = () => {
       );
 
       // Xử lý kết quả của cả hai yêu cầu
-      if (forecastRes.status === "fulfilled")
+      if (forecastRes.status === "fulfilled") {
         setForecaseWeather(forecastRes.value);
+      } else {
+        console.log(forecastRes.reason);
+        if (forecastRes.reason.response.data.status === 429) {
+          navigate("/finishService");
+        } else {
+          navigate("/page-Support");
+        }
+      }
+
       if (currentWeatherRes.status === "fulfilled")
         setcurrentWeather(currentWeatherRes.value);
+      else {
+        console.log(currentWeatherRes.reason);
+        if (currentWeatherRes.reason.response.data.status === 429) {
+          navigate("/finishService");
+        } else {
+          navigate("/page-Support");
+        }
+      }
       if (airRes.status === "fulfilled") setAirPollution(airRes.value);
+      else {
+        console.log(airRes.reason);
+        if (airRes.reason.response.data.status === 429) {
+          navigate("/finishService");
+        } else {
+          navigate("/page-Support");
+        }
+      }
     } catch (error: any) {
       console.log(error);
     } finally {

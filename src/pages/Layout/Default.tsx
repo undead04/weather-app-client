@@ -10,6 +10,7 @@ import AllState from "../AllState/AllState";
 import County from "../County/County";
 import NotFound from "../notFound/NotFound";
 import PageSupport from "../notFound/PageSupport";
+import ServiceWeather from "../notFound/ServiceWeather";
 const Default = () => {
   return (
     <>
@@ -32,6 +33,7 @@ const Default = () => {
         <Route path="/allState" element={<AllState />} />
         <Route path="/allState/:name" element={<County />} />
         <Route path="/page-Support" element={<PageSupport />} />
+        <Route path="/finishService" element={<ServiceWeather />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
     </>
