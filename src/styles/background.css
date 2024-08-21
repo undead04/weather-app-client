@@ -27,3 +27,11 @@
     box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.175);
 
   }
+  .text-container {
+    display: -webkit-box;
+    -webkit-line-clamp: 4; /* Số dòng muốn hiển thị */
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  

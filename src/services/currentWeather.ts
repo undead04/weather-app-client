@@ -1,16 +1,17 @@
-import { IWeatherData } from "../types/types";
+import { IWeatherCounty, IWeatherData } from "../types/types";
 import api from "./api"
-const get=(lat:number,lon:number)=>{
+const get=(state:string,county:string)=>{
     const params = new URLSearchParams();
     let url = api.url.weather;
-    params.append("lat", String(lat));
-    params.append('lon',String(lon));
-    params.append('lang','vi')
-    params.append("appid",process.env.REACT_APP_API_KEY??"");
+    params.append("state", state);
+    params.append('county',county)
     url += "?" + params.toString();
     return api.get<IWeatherData>(url).then(res=>res.data)
 }
+const listRandom=()=>{
+    return api.get<IWeatherCounty[]>(`${api.url.weather}/random`).then(res=>res.data)
+}
 const currentWeatherService={
-    get
+    get,listRandom
 }
 export default currentWeatherService

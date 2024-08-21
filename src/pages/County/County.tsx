@@ -45,7 +45,7 @@ const County = () => {
                       <div className="list-group">
                         {listCounty.map((item) => (
                           <Link
-                            to={`/${item.state.name}/${item.state.name}/weather-forecast`}
+                            to={`/${item.state.name}/${item.name}/weather-forecast`}
                             className="list-group-item list-group-item-action py-3"
                             aria-current="true"
                           >

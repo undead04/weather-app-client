@@ -8,12 +8,12 @@ import {
   handleGetNowHour,
   removeDiacritics,
 } from "../../utils/changeTemp";
-import InconService from "../../services/InconService";
+import InconService from "../../services/IconService";
 import { IAddress, IWeatherData } from "../../types/types";
 import { useNavigate, useParams } from "react-router-dom";
 import LoadingReact from "../../components/LoadingReact";
 import currentWeatherService from "../../services/currentWeather";
-import addressService from "../../services/addressService";
+import TabReact from "../../components/TabReact";
 const WeatherDetail = () => {
   const [currentWeather, setcurrentWeather] = useState<Partial<IWeatherData>>();
   const [loading, setLoading] = useState(true);
@@ -21,17 +21,9 @@ const WeatherDetail = () => {
   const navigate = useNavigate();
   const loadData = async () => {
     try {
-      const query = removeDiacritics(`${county}, ${state}, VN`);
-      const addressRes: IAddress[] = await addressService.get(query);
-      if (addressRes.length === 0) {
-        return navigate("/page-Support");
-      }
-      const lat = addressRes[0].lat;
-      const lon = addressRes[0].lon;
       const [currentWeatherRes] = await Promise.allSettled([
-        currentWeatherService.get(lat, lon),
+        currentWeatherService.get(state ?? "", county ?? ""),
       ]);
-
       // Xử lý kết quả của cả hai yêu cầu
       if (currentWeatherRes.status === "fulfilled")
         setcurrentWeather(currentWeatherRes.value);
@@ -53,6 +45,28 @@ const WeatherDetail = () => {
         <>
           <section className="mt-3">
             <div className="container">
+              <div className="row mb-3">
+                <div className="col-12">
+                  <TabReact
+                    component={[
+                      {
+                        lable: "Hôm nay",
+                        link: `/${state}/${county}/weather-forecast`,
+                        current: 1,
+                      },
+                      {
+                        lable: "Chất lượng không kí",
+                        link: `/${state}/${county}/air-quality-index`,
+                        current: 2,
+                      },
+                    ]}
+                    currentTab={0}
+                  />
+                </div>
+              </div>
+              <div className="row mb-3">
+                <div className="col fs-5">{`${county}, ${state}`}</div>
+              </div>
               <div className="row">
                 <div className="col-12 col-lg-8">
                   <div className="card">

@@ -158,5 +158,5 @@ export interface IAirPollution{
 }
 export interface IWeatherCounty{
     weather:IWeatherData,
-    county:IAddress
+    county:ICounty
 }

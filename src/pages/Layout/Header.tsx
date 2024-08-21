@@ -1,10 +1,43 @@
 import * as React from "react";
 import { useState, useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
+import { ICounty } from "../../types/types";
+import countyService from "../../services/countyService";
 const Header = () => {
+  const [listAddress, setListAddress] = useState<Partial<ICounty[]>>([]);
+  const [timeoutId, setTimeoutId] = useState<NodeJS.Timeout | null>(null);
+  const [inputValue, setInputValue] = useState<string>("");
+  const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const value = event.target.value;
+    setInputValue(value);
+    // Nếu có timeout trước đó, xóa nó
+    if (timeoutId) {
+      clearTimeout(timeoutId);
+    }
+
+    if (value.length > 0) {
+      // Tạo timeout để trì hoãn việc gọi API
+      const newTimeoutId = setTimeout(() => {
+        handleSearch(value);
+      }, 500); // 300ms sau khi người dùng dừng gõ
+
+      setTimeoutId(newTimeoutId);
+    } else {
+      setListAddress([]);
+    }
+  };
+  const handleSearch = async (query: string) => {
+    if (query) {
+      await countyService
+        .list(query, undefined, undefined, 4)
+        .then((res) => setListAddress(res.data));
+    } else {
+      setListAddress([]);
+    }
+  };
   return (
     <>
-      <section className="bg-dark py-3">
+      <section className="bg-dark py-3 ">
         <div className="container">
           <div className="row">
             <div className="col-auto">
@@ -33,7 +66,44 @@ const Header = () => {
                 </svg>
               </Link>
             </div>
-            <div className="col text-end">
+            <div className="col"></div>
+            <div className="col-4">
+              <div className="position-relative">
+                <div className="input-group">
+                  <span className="input-group-text" id="basic-addon1">
+                    <i className="fa-solid fa-magnifying-glass"></i>
+                  </span>
+                  <input
+                    type="search"
+                    className="form-control"
+                    onChange={handleInputChange}
+                    placeholder="Search your Address, City or Code Zip"
+                    aria-label="Search your Address, City or Code Zip"
+                    aria-describedby="basic-addon1"
+                  />
+                </div>
+                {listAddress.length > 0 ? (
+                  <div className="position-absolute w-100 mt-3">
+                    <div className="list-group">
+                      {listAddress.map((item, index) => (
+                        <a
+                          href={`/${item?.state.name}/${item?.name}/weather-forecast`}
+                          className="list-group-item list-group-item-action border-bottom-0"
+                          aria-current="true"
+                          key={index}
+                        >
+                          <p className="m-0 fs-5">
+                            <strong>{item?.name}</strong>
+                          </p>
+                          <small>{item?.state.name}</small>
+                        </a>
+                      ))}
+                    </div>
+                  </div>
+                ) : null}
+              </div>
+            </div>
+            <div className="col-auto">
               <i className="fa-solid fa-bars text-light"></i>
             </div>
           </div>

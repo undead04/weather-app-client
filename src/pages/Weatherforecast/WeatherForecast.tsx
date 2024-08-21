@@ -1,4 +1,3 @@
-import * as React from "react";
 import { useState, useEffect } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import {
@@ -17,14 +16,13 @@ import {
   handleChoiceAir,
   handleDegWind,
   handleGetNowHour,
-  removeDiacritics,
 } from "../../utils/changeTemp";
 import forecaseService from "../../services/forecasetService";
 import LoadingReact from "../../components/LoadingReact";
 import airPollutionService from "../../services/airService";
-import InconService from "../../services/InconService";
+import InconService from "../../services/IconService";
 import currentWeatherService from "../../services/currentWeather";
-import addressService from "../../services/addressService";
+import TabReact from "../../components/TabReact";
 const WeatherForecase = () => {
   const { state, county } = useParams();
   const navigate = useNavigate();
@@ -35,20 +33,13 @@ const WeatherForecase = () => {
   const [airPollution, setAirPollution] = useState<Partial<IAirPollution>>();
   const loadData = async () => {
     try {
-      const query = removeDiacritics(`${county}, ${state}, VN`);
-      const addressRes: IAddress[] = await addressService.get(query);
-      if (addressRes.length === 0) {
-        return navigate("/page-Support");
-      }
-
-      const lat = addressRes[0].lat;
-      const lon = addressRes[0].lon;
       // Chạy hai yêu cầu song song bằng Promise.all
+      console.log(state, county);
       const [forecastRes, currentWeatherRes, airRes] = await Promise.allSettled(
         [
-          forecaseService.get(lat, lon, 8),
-          currentWeatherService.get(lat, lon),
-          airPollutionService.getCurrent(lat, lon),
+          forecaseService.get(state ?? "", county ?? ""),
+          currentWeatherService.get(state ?? "", county ?? ""),
+          airPollutionService.getCurrent(state ?? "", county ?? ""),
         ]
       );
 
@@ -76,6 +67,28 @@ const WeatherForecase = () => {
         <>
           <section className="mt-4">
             <div className="container">
+              <div className="row mb-3">
+                <div className="col-12">
+                  <TabReact
+                    component={[
+                      {
+                        lable: "Hôm nay",
+                        link: `/${state}/${county}/weather-forecast`,
+                        current: 1,
+                      },
+                      {
+                        lable: "Chất lượng không khí",
+                        link: `/${state}/${county}/air-quality-index`,
+                        current: 2,
+                      },
+                    ]}
+                    currentTab={1}
+                  />
+                </div>
+              </div>
+              <div className="row mb-3">
+                <div className="col fs-5">{`${county}, ${state}`}</div>
+              </div>
               <div className="row">
                 <div className="col-12 col-lg-8 ">
                   <Link

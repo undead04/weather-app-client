@@ -1,14 +1,15 @@
-import { IAddress } from "../types/types";
-import api from "./api";
-
-const get=(q:string)=>{
+import { IAddress, IWeatherCounty, IWeatherData } from "../types/types";
+import api from "./api"
+const get=(state:string,county:string)=>{
     const params = new URLSearchParams();
-    let url = `${api.url.address}`;
-    params.append('q',q);
-    params.append('limit',String(1))
-    params.append('appid',process.env.REACT_APP_API_KEY??"")
-    url+="?"+params.toString()
+    let url = api.url.address;
+    params.append("state", state);
+    params.append('county',county)
+    url += "?" + params.toString();
     return api.get<IAddress[]>(url).then(res=>res.data)
 }
-const addressService={get}
+
+const addressService={
+    get
+}
 export default addressService

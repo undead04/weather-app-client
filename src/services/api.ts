@@ -1,14 +1,15 @@
-import { icon } from "@fortawesome/fontawesome-svg-core";
+
 import axios from "axios";
 const url = {
-  baseUrl: "https://weather-app-be-rosy.vercel.app/api",
-  weather:'https://api.openweathermap.org/data/2.5/weather',
-  forecast:"https://api.openweathermap.org/data/2.5/forecast/",
-  air:"http://api.openweathermap.org/data/2.5/air_pollution",
-  address:"http://api.openweathermap.org/geo/1.0/direct",
+  baseUrl: "https://weather-app-alvbimjtz-tran-van-ans-projects.vercel.app/api",
+  weather:'weather',
+  forecast:"forecast",
+  air:"air",
   state:'state',
   county:'county',
-  map:"https://tile.openweathermap.org/map/"
+  icon:'icon',
+  address:'address'
+
 };
 const content={
   json:"application/json",

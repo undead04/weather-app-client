@@ -1,13 +1,11 @@
 import { IAirPollution } from "../types/types";
 import api from "./api";
 
-const getCurrent=(lat:number,lon:number)=>{
+const getCurrent=(state:string,county:string)=>{
     const params = new URLSearchParams();
     let url = api.url.air;
-    params.append("lat", String(lat));
-    params.append("lon",String(lon))
-    params.append('appid',process.env.REACT_APP_API_KEY ??"")
-    // Thêm các tham số vào URL nếu chúng tồn tại
+    params.append("state", state);
+    params.append('county',county)
     url += "?" + params.toString();
     return api.get<IAirPollution>(url).then(res=>res.data)
     

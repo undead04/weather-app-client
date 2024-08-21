@@ -1,13 +1,12 @@
 import * as React from "react";
 import { useState, useEffect } from "react";
-import { IAddress, ICounty, IWeatherCounty } from "../../types/types";
+import { ICounty, IWeatherCounty } from "../../types/types";
 import { Link, useNavigate } from "react-router-dom";
 import countyService from "../../services/countyService";
-import addressService from "../../services/addressService";
-import { handleChangeTemp, removeDiacritics } from "../../utils/changeTemp";
+import { handleChangeTemp } from "../../utils/changeTemp";
 import currentWeatherService from "../../services/currentWeather";
 import LoadingReact from "../../components/LoadingReact";
-import InconService from "../../services/InconService";
+import IconService from "../../services/IconService";
 const Home = () => {
   const [listAddress, setListAddress] = useState<Partial<ICounty[]>>([]);
   const [inputValue, setInputValue] = useState<string>("");
@@ -15,7 +14,6 @@ const Home = () => {
   const [listWeatherCounty, setListWeatherCounty] = useState<IWeatherCounty[]>(
     []
   );
-  const [listCounty, setlistCounty] = useState<ICounty[]>([]);
   const navigate = useNavigate();
   const [timeoutId, setTimeoutId] = useState<NodeJS.Timeout | null>(null);
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -48,35 +46,8 @@ const Home = () => {
   };
   const loadData = async () => {
     try {
-      const countyRes = await countyService.listRandom();
-      setlistCounty(countyRes);
-      let addressRes = await Promise.allSettled(
-        countyRes.map(async (item) => {
-          const query = removeDiacritics(`${item.name}, ${item.state.name},VN`);
-          return addressService.get(query).then((res) => res[0]);
-        })
-      );
-
-      // Lọc các kết quả thành công và lấy dữ liệu thời tiết
-      const weatherRes: IWeatherCounty[] = await Promise.all(
-        addressRes
-          .filter(
-            (result): result is PromiseFulfilledResult<IAddress> =>
-              result.status === "fulfilled" && result.value != undefined
-          )
-          .map(async (item) => {
-            console.log(item);
-            const lat = item.value.lat;
-            const lon = item.value.lon;
-            const weatherData = await currentWeatherService.get(lat, lon);
-            // Type assertion (use with caution)
-            return {
-              weather: weatherData,
-              county: item.value,
-            } as IWeatherCounty;
-          })
-      );
-      setListWeatherCounty(weatherRes);
+      const response = await currentWeatherService.listRandom();
+      setListWeatherCounty(response);
     } catch (error: any) {
       console.log(error);
     } finally {
@@ -84,13 +55,12 @@ const Home = () => {
     }
   };
   useEffect(() => {
-    if (listCounty.length === 0) {
-      const fetchData = async () => {
-        await loadData();
-      };
-      fetchData();
-    }
-  }, [listCounty]);
+    // Gọi loadData ngay khi component được mount
+    const fetchData = async () => {
+      await loadData();
+    };
+    fetchData();
+  }, []);
   return (
     <>
       {loading === false ? (
@@ -153,24 +123,16 @@ const Home = () => {
                     {listWeatherCounty.map((item, index) => (
                       <div className="col-12 col-md-6" key={index}>
                         <Link
-                          to={`/${
-                            listCounty.find(
-                              (county) => county.name == item.county.name
-                            )?.state.name
-                          }/${
-                            listCounty.find(
-                              (county) => county.name == item.county.name
-                            )?.name
-                          }/weather-forecast`}
+                          to={`/${item.county.state.name}/${item.county.name}/weather-forecast`}
                           className="text-black text-decoration-none"
                         >
                           <div className="row me-1 bg-white justify-content-center py-3">
                             <div className="col align-self-center">
-                              {item.county.local_names?.vi}
+                              {item.county.name}
                             </div>
                             <div className="col-auto align-self-center">
                               <img
-                                src={InconService.get(
+                                src={IconService.get(
                                   item.weather.weather[0].icon
                                 )}
                                 alt=""

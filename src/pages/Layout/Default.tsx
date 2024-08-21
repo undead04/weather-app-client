@@ -17,7 +17,6 @@ const Default = () => {
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/home" element={<Home />} />
-
         <Route
           path="/:state/:county/current-weather"
           element={<WeatherDetail />}

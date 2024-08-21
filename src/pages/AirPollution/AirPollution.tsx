@@ -1,54 +1,28 @@
 import * as React from "react";
 import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { IAddress, IAirPollution } from "../../types/types";
+import { IAirPollution } from "../../types/types";
 import airPollutionService from "../../services/airService";
-import {
-  handleChangeBorderColorAir,
-  handleChangeDateTime,
-  handleChoiceAir,
-  handleConvertUNIX,
-  removeDiacritics,
-} from "../../utils/changeTemp";
+import { handleChangeDateTime, handleChoiceAir } from "../../utils/changeTemp";
 import LoadingReact from "../../components/LoadingReact";
 import AirPolutionDetail from "./AirPolutionDetail";
 import AirQuantityScale from "./AirQualityScale";
-import addressService from "../../services/addressService";
-import forecastService from "../../services/forecasetService";
+import TabReact from "../../components/TabReact";
 const AirPollution = () => {
   const { state, county } = useParams();
   const [loading, setLoading] = useState(true);
   const [airPollution, setAirPollution] = useState<Partial<IAirPollution>>({});
-  const [forecaseAir, setForecaseAir] = useState<Partial<IAirPollution>>();
   const [indexPage, setindexPage] = useState<number>(1);
   const navigate = useNavigate();
   const loadData = async () => {
     try {
-      const query = removeDiacritics(`${county}, ${state}, VN`);
-      const addressRes: IAddress[] = await addressService.get(query);
-      if (addressRes.length === 0) {
-        return navigate("/page-Support");
-      }
-      const lat = addressRes[0].lat;
-      const lon = addressRes[0].lon;
-      const newDate = new Date();
-      const start = handleConvertUNIX(newDate);
-      const end = handleConvertUNIX(
-        new Date(newDate.getTime() + 24 * 60 * 60 * 1000)
-      );
-      if (lat && lon) {
-        // Chạy hai yêu cầu song song bằng Promise.all
-        const [currentAirRes, forecaseAirRes] = await Promise.allSettled([
-          airPollutionService.getCurrent(lat, lon),
-          airPollutionService.getForecase(lat, lon, start, end),
-        ]);
+      const [currentAirRes] = await Promise.allSettled([
+        airPollutionService.getCurrent(state ?? "", county ?? ""),
+      ]);
 
-        // Xử lý kết quả của cả hai yêu cầu
-        if (currentAirRes.status === "fulfilled")
-          setAirPollution(currentAirRes.value);
-        if (forecaseAirRes.status === "fulfilled")
-          setForecaseAir(forecaseAirRes.value);
-      }
+      // Xử lý kết quả của cả hai yêu cầu
+      if (currentAirRes.status === "fulfilled")
+        setAirPollution(currentAirRes.value);
     } catch (error: any) {
       console.log(error);
     } finally {
@@ -74,6 +48,28 @@ const AirPollution = () => {
         <>
           <section className="mt-3">
             <div className="container">
+              <div className="row mb-3">
+                <div className="col-12">
+                  <TabReact
+                    component={[
+                      {
+                        lable: "Hôm nay",
+                        link: `/${state}/${county}/weather-forecast`,
+                        current: 1,
+                      },
+                      {
+                        lable: "Chất lượng không khí",
+                        link: `/${state}/${county}/air-quality-index`,
+                        current: 2,
+                      },
+                    ]}
+                    currentTab={2}
+                  />
+                </div>
+              </div>
+              <div className="row mb-3">
+                <div className="col fs-5">{`${county}, ${state}`}</div>
+              </div>
               <div className="row">
                 <div className="col-12 col-md-8">
                   <div className="card hover-shadow-lg">
@@ -132,7 +128,7 @@ const AirPollution = () => {
               </div>
             </div>
           </section>
-          <section className="mt-3">
+          <section className="mt-3 pb-3">
             <div className="container">
               <div className="row">
                 <div className="col-12 col-md-8">
@@ -148,7 +144,7 @@ const AirPollution = () => {
                                 }`}
                                 aria-current="page"
                                 href="#"
-                                onClick={() => setindexPage(1)}
+                                onClick={(e) => handleChangeIndexPage(e, 1)}
                               >
                                 Chất ô nhiểm hiện tại
                               </a>
@@ -159,7 +155,7 @@ const AirPollution = () => {
                                   indexPage == 2 && "active"
                                 }`}
                                 href="#"
-                                onClick={() => setindexPage(2)}
+                                onClick={(e) => handleChangeIndexPage(e, 2)}
                               >
                                 Thang đo chất lượng không khí
                               </a>

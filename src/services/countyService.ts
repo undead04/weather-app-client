@@ -22,10 +22,7 @@ const list=(name?:string,state?:string,page?:number,pageSize?:number)=>{
 const get=(id:string)=>{
     return api.get<ICounty>(`${api.url.county}/${id}`).then(res=>res.data)
 }
-const listRandom=()=>{
-    return api.get<ICounty[]>(`${api.url.county}/random`).then(res=>res.data)
-}
 const countyService={
-    list,get,listRandom
+    list,get
 }
 export default countyService
