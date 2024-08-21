@@ -1,7 +1,7 @@
 
 import axios from "axios";
 const url = {
-  baseUrl: "https://weather-app-alvbimjtz-tran-van-ans-projects.vercel.app/api",
+  baseUrl: "https://weather-app-be-rosy.vercel.app/api",
   weather:'weather',
   forecast:"forecast",
   air:"air",
